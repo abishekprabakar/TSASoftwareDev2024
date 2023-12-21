@@ -1,0 +1,262 @@
+openapi: 3.0.0
+info:
+  title: Mental Health Application
+  version: "0.0.1"
+  description: |
+    Mental health app
+    - recommend users with appropriate podcast based on their own personal need
+    - chat with users and give recommendations (ChatGPT/Bard)
+    - provide basic authentication features (login, register, logout)
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: localhost:3000
+    description: Development server
+
+paths:
+  /user/login:
+    post:
+      summary: Provide user login
+      operationId: login
+      requestBody:
+        description: Username and password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "user1"
+                password:
+                  type: string
+                  example: "password"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  token:
+                    type: string
+                    description: Bear token
+                    example: "AbCdEf123456"
+        "400":
+          description: Invalid username/password supplied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid username/password supplied"
+  /user/register:
+    post:
+      summary: Register a new user
+      operationId: register
+      requestBody:
+        description: Username and password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "user1"
+                password:
+                  type: string
+                  example: "password"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Bear token
+                    example: "AbCdEf123456"
+        "400":
+          description: Invalid username/password supplied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid username/password supplied"
+  /user/logout:
+    post:
+      summary: Logout user
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout successful"
+        "400":
+          description: Invalid token supplied
+  /user/preferences:
+    get:
+      summary: Get user preferences
+      operationId: getPreferences
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  preferences:
+                    type: array
+                    items:
+                      type: string
+                      example: "depression"
+        "400":
+          description: Invalid token supplied
+    post:
+      summary: Update user preferences
+      operationId: updatePreferences
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User's preferences
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                preferences:
+                  type: array
+                  items:
+                    type: string
+                    example: "depression"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Update successful"
+        "400":
+          description: Invalid token supplied
+  /podcast/recommend:
+    get:
+      summary: Recommend podcast to user
+      operationId: recommend
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Podcast"
+        "400":
+          description: Invalid token supplied
+  /chat:
+    post:
+      summary: Chat with bot (text/event-stream)
+      operationId: chat
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: User's message
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: "I feel depressed"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  "I recommend you to listen to this podcast:
+                  https://www.melrobbins.com/podcasts/episode-129"
+        "400":
+          description: Invalid token supplied
+          
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Podcast:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Podcast id
+          example: "1"
+        title:
+          type: string
+          description: Podcast title
+          example: "Podcast 1"
+        description:
+          type: string
+          description: Podcast description
+          example: "Podcast 1 description"
+        url:
+          type: string
+          description: Podcast url
+          example: "https://www.melrobbins.com/podcasts/episode-129"
+        image:
+          type: string
+          description: Cover image of podcast
+          example: "https://www.melrobbins.com/wp-content/uploads/2020/08/129-1.jpg"
+        source:
+          type: string
+          description: Podcast source (e.g. Mel Robbins, Spotify, YouTube)
+          example: "Mel Robbins"
+        author:
+          type: string
+          description: Podcast author
+          example: "Mel Robbins"
+        tags:
+          type: array
+          description: Podcast tags
+          items:
+            type: string
+            example: "depression"

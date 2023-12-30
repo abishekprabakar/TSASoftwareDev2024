@@ -17,11 +17,11 @@ import { ServerState, serverAtom, userAtom } from "../model/state";
 export default function Login() {
   const server = useRecoilValue(serverAtom);
   if (server.status !== ServerState.connected)
-    return <__server_not_connected />;
-  return <__login />;
+    // return <_server_not_connected />;
+    return <__login />;
 }
 
-function __server_not_connected({}) {
+function _server_not_connected({}) {
   const server = useRecoilValue(serverAtom);
   const theme = useTheme();
 
@@ -129,88 +129,97 @@ function __login({}) {
         <Appbar.Content title="Login" />
       </Appbar.Header>
 
-      <IconButton
-        icon="login"
-        size={64}
-        iconColor={theme.colors.primary}
-        style={{ alignSelf: "center" }}
-      />
-      <Text
-        variant="titleLarge"
-        style={{
-          alignSelf: "center",
-          textAlign: "center",
-          fontFamily: "serif",
-          fontSize: 18,
-        }}
-      >
-        Join us to chat with your personalized counselor.
-      </Text>
       <View
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: 8,
+          height: "80%",
           padding: 16,
           justifyContent: "center",
         }}
       >
-        <TextInput
-          label="Username"
-          value={username}
-          onChangeText={setUsername}
+        <IconButton
+          icon="login"
+          size={64}
+          iconColor={theme.colors.primary}
+          style={{ alignSelf: "center" }}
         />
-        <TextInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Button
-          mode="contained"
-          onPress={async () => {
-            try {
-              let user = new User(username, password);
-              await user.login(server.url);
-              setUser(user.recoilState);
-              snackbar("Logged in successfully!");
-            } catch (e) {
-              snackbar(`Login failed: ${e}`);
-            }
+        <Text
+          variant="titleLarge"
+          style={{
+            alignSelf: "center",
+            textAlign: "center",
+            fontFamily: "serif",
+            fontSize: 18,
           }}
         >
-          Login
-        </Button>
-      </View>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 2,
-          paddingLeft: 16,
-        }}
-      >
-        <Text variant="bodyMedium">First time user?</Text>
-        <TouchableOpacity
-          onPress={async () => {
-            try {
-              let user = new User(username, password);
-              await user.register(server.url);
-              setUser(user.recoilState);
-              snackbar("Registered successfully!");
-            } catch (e) {
-              snackbar(`Registration failed: ${e}`);
-            }
+          Join us to chat with your personalized counselor.
+        </Text>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            padding: 16,
+            paddingHorizontal: 32,
           }}
         >
-          <Text
-            variant="bodyMedium"
-            style={{
-              color: theme.colors.primary,
+          <TextInput
+            label="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Button
+            mode="contained"
+            onPress={async () => {
+              try {
+                let user = new User(username, password);
+                await user.login(server.url);
+                setUser(user.recoilState);
+                snackbar("Logged in successfully!");
+              } catch (e) {
+                snackbar(`Login failed: ${e}`);
+              }
             }}
           >
-            Register here
-          </Text>
-        </TouchableOpacity>
+            Login
+          </Button>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 2,
+            paddingLeft: 32,
+          }}
+        >
+          <Text variant="bodyMedium">First time user?</Text>
+          <TouchableOpacity
+            onPress={async () => {
+              try {
+                let user = new User(username, password);
+                await user.register(server.url);
+                setUser(user.recoilState);
+                snackbar("Registered successfully!");
+              } catch (e) {
+                snackbar(`Registration failed: ${e}`);
+              }
+            }}
+          >
+            <Text
+              variant="bodyMedium"
+              style={{
+                color: theme.colors.primary,
+              }}
+            >
+              Register here
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View
         style={{

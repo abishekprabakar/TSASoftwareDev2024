@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import {
   Appbar,
@@ -13,12 +13,25 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { User } from "../controller";
 import { ServerState, serverAtom, userAtom } from "../model/state";
+import { createStackNavigator } from "@react-navigation/stack";
+
+const stack = createStackNavigator();
 
 export default function Login() {
-  const server = useRecoilValue(serverAtom);
-  if (server.status !== ServerState.connected)
-    // return <_server_not_connected />;
-    return <__login />;
+  return (
+    <stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <stack.Screen name="Login" component={_login} />
+      <stack.Screen name="Register" component={_register} />
+      <stack.Screen
+        name="Server Not Connected"
+        component={_server_not_connected}
+      />
+    </stack.Navigator>
+  );
 }
 
 function _server_not_connected({}) {
@@ -27,6 +40,12 @@ function _server_not_connected({}) {
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  useEffect(() => {
+    if (server.status === ServerState.connected) {
+      snackbar("Server connection restored!");
+    }
+  }, [server.status]);
 
   const snackbar = (message: string) => {
     setSnackbarMessage(message);
@@ -84,6 +103,9 @@ function _server_not_connected({}) {
           onPress={() => {
             snackbar("Server connection restored!");
           }}
+          style={{
+            marginTop: 16,
+          }}
         >
           Retry
         </Button>
@@ -99,10 +121,18 @@ function _server_not_connected({}) {
   );
 }
 
-function __login({}) {
+type loginProps = {
+  navigation: any;
+};
+
+function _login({ navigation }: loginProps) {
   const [user, setUser] = useRecoilState(userAtom);
   const server = useRecoilValue(serverAtom);
   const theme = useTheme();
+
+  if (server.status === ServerState.disconnected) {
+    navigation.navigate("Server Not Connected");
+  }
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -217,6 +247,154 @@ function __login({}) {
               }}
             >
               Register here
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          flexGrow: 1,
+          height: "100%",
+        }}
+      />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+      >
+        {snackbarMessage}
+      </Snackbar>
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+type registerProps = {
+  navigation: any;
+};
+
+function _register({ navigation }: registerProps) {
+  const [user, setUser] = useRecoilState(userAtom);
+  const server = useRecoilValue(serverAtom);
+  const theme = useTheme();
+
+  if (server.status === ServerState.disconnected) {
+    navigation.navigate("Server Not Connected");
+  }
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const snackbar = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+  };
+
+  return (
+    <View
+      style={{
+        display: "flex",
+        gap: 16,
+        flexDirection: "column",
+        justifyContent: "center",
+        height: "100%",
+      }}
+    >
+      <Appbar.Header>
+        <Appbar.Content title="Register" />
+      </Appbar.Header>
+
+      <View
+        style={{
+          display: "flex",
+          height: "80%",
+          padding: 16,
+          justifyContent: "center",
+        }}
+      >
+        <IconButton
+          icon="login"
+          size={64}
+          iconColor={theme.colors.primary}
+          style={{ alignSelf: "center" }}
+        />
+        <Text
+          variant="titleLarge"
+          style={{
+            alignSelf: "center",
+            textAlign: "center",
+            fontFamily: "serif",
+            fontSize: 18,
+          }}
+        >
+          Join us to chat with your personalized counselor.
+        </Text>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            padding: 16,
+            paddingHorizontal: 32,
+          }}
+        >
+          <TextInput
+            label="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Button
+            mode="contained"
+            onPress={async () => {
+              try {
+                let user = new User(username, password);
+                await user.register(server.url);
+                setUser(user.recoilState);
+                snackbar("Registered successfully!");
+              } catch (e) {
+                snackbar(`Registration failed: ${e}`);
+              }
+            }}
+          >
+            Register
+          </Button>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 2,
+            paddingLeft: 32,
+          }}
+        >
+          <Text variant="bodyMedium">Already have an account?</Text>
+          <TouchableOpacity
+            onPress={async () => {
+              try {
+                let user = new User(username, password);
+                await user.login(server.url);
+                setUser(user.recoilState);
+                snackbar("Logged in successfully!");
+              } catch (e) {
+                snackbar(`Login failed: ${e}`);
+              }
+            }}
+          >
+            <Text
+              variant="bodyMedium"
+              style={{
+                color: theme.colors.primary,
+              }}
+            >
+              Login here
             </Text>
           </TouchableOpacity>
         </View>

@@ -1,5 +1,7 @@
 {
     "conventionalCommits.scopes": [
-        "login"
+        "login",
+        "server",
+        "backend"
     ]
 }

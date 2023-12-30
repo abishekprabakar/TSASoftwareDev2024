@@ -7,6 +7,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+flask = "^3.0.0"
+flask-httpauth = "^4.8.0"
+werkzeug = "^3.0.1"
+sqlalchemy = "^2.0.24"
+undetected-chromedriver = "^3.5.4"
+selenium-wire = "^5.1.0"
 
 
 [build-system]

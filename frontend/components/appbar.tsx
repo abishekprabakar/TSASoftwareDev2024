@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const links = [
-  { label: "MindCasts", href: "/mindcasts" },
   { label: "Counsel", href: "/counsel" },
   { label: "Settings", href: "/settings" },
 ];

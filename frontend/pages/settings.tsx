@@ -1,10 +1,10 @@
 import Page from "@/components/page";
 import Section from "@/components/section";
 
-export default function index() {
+export default function Settings() {
   return (
     <Page>
-      <Section>Index</Section>
+      <Section>Settings</Section>
     </Page>
   );
 }

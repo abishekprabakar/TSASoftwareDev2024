@@ -1,3 +1,6 @@
+const colors = require('tailwindcss/colors');
+
+/** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: [
 		'./pages/**/*.{js,ts,jsx,tsx}',
@@ -5,4 +8,13 @@ module.exports = {
 	],
 	darkMode: 'class',
 	plugins: [require('tailwindcss-safe-area')],
-}
+	theme: {
+		extend: {
+			colors: {
+				pri: colors.blue,
+				sec: colors.amber,
+				dar: colors.stone,
+			},
+		},
+	},
+};

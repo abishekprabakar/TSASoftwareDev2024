@@ -1,7 +1,12 @@
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
+import {
+  browserLocalPersistence,
+  getAuth,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { getFunctions } from "firebase/functions";
-import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDMapLLAzc8YYTYpv6WM26d6NwasdczpgQ",
@@ -20,5 +25,19 @@ if (typeof window !== "undefined") {
 }
 const functions = getFunctions(app);
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    if (typeof window === "undefined") return;
+    const email = localStorage.getItem("email");
+    const password = localStorage.getItem("password");
+    if (!email || !password) return;
+    return signInWithEmailAndPassword(auth, email, password);
+  })
+  .catch((error) => {
+    // TODO: Handle errors
+    console.error("Error signing in with local storage credentials")
+    console.error(error);
+  });
 
-export { analytics, app, functions, auth };
+export { analytics, app, auth, functions };
+

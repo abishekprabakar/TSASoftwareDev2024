@@ -1,12 +1,10 @@
 import { atom } from "recoil";
-import { recoilPersist } from "recoil-persist";
-
-const { persistAtom } = recoilPersist();
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface User {
   uid: string;
   username: string;
-  password: string;
 }
 
 const userState = atom<User>({
@@ -14,9 +12,31 @@ const userState = atom<User>({
   default: {
     uid: "",
     username: "",
-    password: "",
   },
-  effects: [persistAtom],
+  effects: [
+    ({ setSelf, trigger }) => {
+      if (trigger === "get") {
+        const user = auth.currentUser;
+        if (user) {
+          setSelf({
+            uid: user.uid,
+            username: user.displayName || "",
+          });
+        }
+      }
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setSelf({
+            uid: user.uid,
+            username: user.displayName || "",
+          });
+        }
+      });
+
+      return () => {};
+    },
+  ],
 });
 
 export type { User };

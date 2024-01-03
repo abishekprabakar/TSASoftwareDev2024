@@ -25,19 +25,6 @@ if (typeof window !== "undefined") {
 }
 const functions = getFunctions(app);
 const auth = getAuth(app);
-setPersistence(auth, browserLocalPersistence)
-  .then(() => {
-    if (typeof window === "undefined") return;
-    const email = localStorage.getItem("email");
-    const password = localStorage.getItem("password");
-    if (!email || !password) return;
-    return signInWithEmailAndPassword(auth, email, password);
-  })
-  .catch((error) => {
-    // TODO: Handle errors
-    console.error("Error signing in with local storage credentials")
-    console.error(error);
-  });
+setPersistence(auth, browserLocalPersistence);
 
 export { analytics, app, auth, functions };
-

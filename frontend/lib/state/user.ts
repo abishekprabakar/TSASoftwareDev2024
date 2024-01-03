@@ -2,17 +2,14 @@ import { atom } from "recoil";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
-interface User {
+interface AppUser {
   uid: string;
   username: string;
 }
 
-const userState = atom<User>({
+const userState = atom<AppUser | null>({
   key: "userState",
-  default: {
-    uid: "",
-    username: "",
-  },
+  default: null,
   effects: [
     ({ setSelf, trigger }) => {
       if (trigger === "get") {
@@ -24,7 +21,6 @@ const userState = atom<User>({
           });
         }
       }
-
       onAuthStateChanged(auth, (user) => {
         if (user) {
           setSelf({
@@ -39,5 +35,5 @@ const userState = atom<User>({
   ],
 });
 
-export type { User };
+export type { AppUser as User };
 export { userState };

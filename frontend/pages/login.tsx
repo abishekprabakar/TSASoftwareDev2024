@@ -15,8 +15,8 @@ import { useRecoilValue } from "recoil";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const user = useRecoilValue(userState);
   const router = useRouter();
+  const user = useRecoilValue(userState);
 
   const [error, setError] = useState<String | null>(null);
   const [message, setMessage] = useState<String | null>(null);
@@ -35,7 +35,7 @@ export default function Login() {
         setLoginStatus(Status.FAIL);
       }
     },
-    [setLoginStatus, setError],
+    [setLoginStatus, setError, router],
   );
 
   const register = useCallback(
@@ -50,7 +50,7 @@ export default function Login() {
         setRegisterStatus(Status.FAIL);
       }
     },
-    [setRegisterStatus, setError],
+    [setRegisterStatus, setError, router],
   );
 
   useEffect(() => {
@@ -62,9 +62,55 @@ export default function Login() {
     }
   }, [error]);
 
+  useEffect(() => {
+    if (message) {
+      const id = setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+      return () => clearTimeout(id);
+    }
+  }, [message]);
+
+  const snacks = (
+    <>
+      <Alert
+        color="red"
+        className="mt-8"
+        open={error !== null}
+        onClose={() => setError(null)}
+        animate={{
+          mount: { y: 0 },
+          unmount: { y: 100 },
+        }}
+      >
+        <div className="flex flex-row items-center gap-2">
+          <HiExclamationCircle />
+          <p>{error}</p>
+        </div>
+      </Alert>
+      <Alert
+        color="green"
+        className="mt-8"
+        open={message !== null}
+        onClose={() => setMessage(null)}
+        animate={{
+          mount: { y: 0 },
+          unmount: { y: 100 },
+        }}
+      >
+        <div className="flex flex-row items-center gap-2">
+          <HiInformationCircle />
+          <p>{message}</p>
+        </div>
+      </Alert>
+    </>
+  );
+
   if (user !== null) {
-    setMessage("You are already logged in. Redirecting...");
-    router.push("/");
+    if (message === null) setMessage("You are already logged in. Redirecting...");
+    setTimeout(() => {
+      router.push("/");
+    }, 1000);
   }
 
   return (
@@ -116,36 +162,7 @@ export default function Login() {
             <p>Have an account? Login</p>
           </Button>
         </div>
-        <Alert
-          color="red"
-          className="mt-8"
-          open={error !== null}
-          onClose={() => setError(null)}
-          animate={{
-            mount: { y: 0 },
-            unmount: { y: 100 },
-          }}
-        >
-          <div className="flex flex-row items-center gap-2">
-            <HiExclamationCircle />
-            <p>{error}</p>
-          </div>
-        </Alert>
-        <Alert
-          color="green"
-          className="mt-8"
-          open={message !== null}
-          onClose={() => setMessage(null)}
-          animate={{
-            mount: { y: 0 },
-            unmount: { y: 100 },
-          }}
-        >
-          <div className="flex flex-row items-center gap-2">
-            <HiInformationCircle />
-            <p>{message}</p>
-          </div>
-        </Alert>
+        {snacks}
       </Section>
     </Page>
   );

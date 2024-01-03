@@ -1,6 +1,6 @@
 {
-	"name": "next-pwa-template",
-	"version": "0.0.0",
+	"name": "tsa2024-software-development",
+	"version": "0.0.1",
 	"license": "MIT",
 	"scripts": {
 		"dev": "next dev",
@@ -30,9 +30,10 @@
 		"typescript": "^5.2.2"
 	},
 	"prettier": {
-		"semi": false,
+		"semi": true,
 		"singleQuote": true,
 		"jsxSingleQuote": true,
-		"useTabs": true
+		"useTabs": true,
+		"tabWidth": 2
 	}
 }

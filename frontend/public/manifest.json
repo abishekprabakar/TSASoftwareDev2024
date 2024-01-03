@@ -1,7 +1,7 @@
 {
-	"name": "Rice Bowl",
-	"short_name": "Rice Bowl",
-	"description": "Fluffless jasmine rice for those cold winter nights",
+	"name": "MoodCasts",
+	"short_name": "MoodCasts",
+	"description": "MoodCasts is an app that allows you to listen to podcasts that will help your feeling when you are feeling down & provide you with a personalized counseling experience with LLM.",
 	"icons": [
 		{
 			"src": "/images/icon-192.png",

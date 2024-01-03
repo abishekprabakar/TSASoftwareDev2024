@@ -4,5 +4,6 @@
         "server",
         "backend",
         "frontend"
-    ]
+    ],
+    "prettier.configPath": "./frontend/.pretterrc.json"
 }
